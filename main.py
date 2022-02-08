@@ -11,6 +11,9 @@ class MyWidget(QMainWindow):
         self.counter = 5
         super().__init__()
         uic.loadUi('main.ui', self)
+        self.mail = ''
+        self.code = ''
+
         self.show_main_win()
 
         self.submit_code_bb.clicked.connect(self.act_code)
@@ -75,7 +78,7 @@ class MyWidget(QMainWindow):
         self.password_edit.setText('')
         con = sqlite3.connect("users.db")
         cur = con.cursor()
-        res = cur.execute("SELECT password FROM data WHERE email = ?", [self.mail]).fetchone()[0]
+        res = str(cur.execute("SELECT password FROM data WHERE email = ?", [self.mail]).fetchone()[0])
         con.close()
         if res == password:
             self.code = choicer()
@@ -146,7 +149,7 @@ class MyWidget(QMainWindow):
             smtp_server.login(gmail_user, gmail_password)
             smtp_server.sendmail(sent_from, to, email_text)
             smtp_server.close()
-        except Exception:
+        except smtplib.SMTPAuthenticationError:
             return False
         return True
 
